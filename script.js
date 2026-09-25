@@ -2,6 +2,7 @@
 const modal = document.getElementById('skillModal');
 const modalTitle = document.getElementById('modalTitle');
 const modalBody = document.getElementById('modalBody');
+const modalIcon = document.getElementById('modalIcon');
 
 // Smooth internal navigation
 for (const link of document.querySelectorAll('a[href^="#"]')) {
@@ -16,9 +17,8 @@ for (const link of document.querySelectorAll('a[href^="#"]')) {
   });
 }
 
-// Hero profile photo contact card.
-const profilePhoto = document.querySelector('.profile-photo-slot');
-profilePhoto?.addEventListener('click', () => {
+// Shared contact card used by the profile photo and the interactive phone in the Hero scene.
+function openContactCard(){
   openModal('Manjunatha M K', `
     <div class="profile-modal-content">
       <button class="profile-modal-photo" type="button" data-open-photo aria-label="View profile photo larger and zoom">
@@ -32,9 +32,13 @@ profilePhoto?.addEventListener('click', () => {
         <a href="https://www.linkedin.com/in/manjunatha-m-k-abb34018a" target="_blank" rel="noopener noreferrer"><span class="modal-contact-icon linkedin-icon">in</span><span>LinkedIn</span><small>Connect on LinkedIn</small></a>
         <a href="https://github.com/Mk2000-pheonix" target="_blank" rel="noopener noreferrer"><span class="modal-contact-icon github-icon">&lt;/&gt;</span><span>GitHub</span><small>View my projects</small></a>
         <a href="https://www.instagram.com/_phoenix_manju?stkn=bXJmajBocHE1M2hm" target="_blank" rel="noopener noreferrer"><span class="modal-contact-icon instagram-icon">◎</span><span>Instagram</span><small>Follow on Instagram</small></a>
+        <a href="https://wa.me/917338594205" target="_blank" rel="noopener noreferrer"><span class="modal-contact-icon whatsapp-icon"><img src="assets/icons/whatsapp.svg" alt=""></span><span>WhatsApp</span><small>Chat on WhatsApp</small></a>
       </div>
     </div>`);
-});
+}
+const profilePhoto = document.querySelector('.profile-photo-slot');
+profilePhoto?.addEventListener('click', openContactCard);
+document.querySelector('[data-contact-hotspot]')?.addEventListener('click', openContactCard);
 
 // Full-size, zoomable profile photo viewer.
 const photoLightbox = document.getElementById('photoLightbox');
@@ -95,6 +99,21 @@ photoLightboxImage?.addEventListener('pointermove', e => {
 photoLightboxImage?.addEventListener('pointerup', () => { photoDragging = false; });
 photoLightboxImage?.addEventListener('pointercancel', () => { photoDragging = false; });
 
+
+// Clickable tool chips: show a concise explanation with the tool icon.
+document.querySelectorAll('.tool-clickable').forEach(tool => {
+  const openTool = () => {
+    const title = tool.dataset.toolTitle || 'Tool';
+    const what = tool.dataset.toolWhat || '';
+    const use = tool.dataset.toolUse || '';
+    const img = tool.querySelector('img');
+    const iconSrc = img ? img.getAttribute('src') : (tool.dataset.toolIcon || '');
+    openModal(title, `<p><strong>What it is:</strong> ${what}</p><p><strong>Why it is used:</strong> ${use}</p>`, iconSrc);
+  };
+  tool.addEventListener('click', openTool);
+  tool.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openTool(); } });
+});
+
 // Interactive skill / roadmap cards.
 document.querySelectorAll('[data-modal-title]').forEach(card => {
   card.addEventListener('click', () => openModal(card.dataset.modalTitle, card.dataset.modalBody));
@@ -106,10 +125,14 @@ document.querySelectorAll('[data-modal-title]').forEach(card => {
   });
 });
 
-function openModal(title, body) {
+function openModal(title, body, iconSrc = '') {
   if (!modal) return;
   modalTitle.textContent = title;
   modalBody.innerHTML = body || '';
+  if (modalIcon) {
+    modalIcon.innerHTML = iconSrc ? `<img src="${iconSrc}" alt="">` : '';
+    modalIcon.style.display = iconSrc ? 'grid' : 'none';
+  }
   modal.classList.add('show');
   modal.setAttribute('aria-hidden', 'false');
   document.body.classList.add('modal-open');
@@ -133,3 +156,94 @@ document.querySelectorAll('[data-placeholder-link]').forEach(link => {
     openModal('Link to be added', '<p>This button is ready. Add your real LinkedIn, GitHub, resume or project URL in <code>index.html</code>.</p><p class="modal-tip">Tip: replace the <code>href="#"</code> value with your actual link.</p>');
   });
 });
+
+// Interactive portfolio guide + career journey context.
+function openPortfolioGuide(){
+  const guide=document.querySelector('.hero-guide-character');
+  const speech=document.getElementById('guideSpeech');
+  if(!guide || !speech) return;
+  const open=!speech.classList.contains('is-open');
+  speech.classList.toggle('is-open',open);
+  guide.classList.toggle('is-active',open);
+  guide.setAttribute('aria-expanded',String(open));
+  speech.setAttribute('aria-hidden',String(!open));
+}
+const heroGuide=document.querySelector('.hero-guide-character');
+heroGuide?.addEventListener('click', (e)=>{ if(e.target.closest('.guide-speech')) return; openPortfolioGuide(); });
+document.querySelector('.guide-speech-close')?.addEventListener('click', (e)=>{
+  e.stopPropagation();
+  const speech=document.getElementById('guideSpeech');
+  const guide=document.querySelector('.hero-guide-character');
+  speech?.classList.remove('is-open'); guide?.classList.remove('is-active'); guide?.setAttribute('aria-expanded','false'); speech?.setAttribute('aria-hidden','true');
+});
+document.querySelector('[data-guide-nav]')?.addEventListener('click',()=>{
+  const speech=document.getElementById('guideSpeech'); const guide=document.querySelector('.hero-guide');
+  speech?.classList.remove('is-open'); guide?.classList.remove('is-active'); guide?.setAttribute('aria-expanded','false'); speech?.setAttribute('aria-hidden','true');
+});
+
+function openJourneyContext(el){
+  const title=el.dataset.journeyTitle || 'Career Journey';
+  const body=el.dataset.journeyBody || '';
+  const icon=el.dataset.journeyIcon || '';
+  openModal(title, body, icon);
+}
+document.querySelectorAll('.journey-clickable, .hero-journey-node').forEach(item=>{
+  item.addEventListener('click',()=>openJourneyContext(item));
+  item.addEventListener('keydown',e=>{ if(e.key==='Enter' || e.key===' '){e.preventDefault();openJourneyContext(item);} });
+});
+
+document.addEventListener('click', e => {
+  const nav = e.target.closest('[data-guide-nav]');
+  if (!nav) return;
+  const href = nav.getAttribute('href');
+  const target = href ? document.querySelector(href) : null;
+  if (target){ e.preventDefault(); closeModal(); target.scrollIntoView({behavior:'smooth',block:'start'}); }
+});
+
+// V53 — Interactive objects inside the 3D workspace scene.
+document.querySelectorAll('.scene-hotspot').forEach(item => {
+  const openScene = () => {
+    const title = item.dataset.sceneTitle || 'Workspace';
+    const body = item.dataset.sceneBody || '';
+    openModal(title, body);
+  };
+  item.addEventListener('click', openScene);
+  item.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openScene(); }
+  });
+});
+
+// V54 — Robust phone/contact hotspot interaction.
+document.addEventListener('click', (e) => {
+  const phone = e.target.closest('[data-contact-hotspot]');
+  if (!phone) return;
+  e.preventDefault();
+  e.stopPropagation();
+  openContactCard();
+});
+
+// V57 — reveal sections smoothly as they enter the viewport and add compact section icons.
+(function initSectionMotion(){
+  const iconMap={
+    about:'👤', skills:'⚙', 'data-engineering':'◈', projects:'🚀',
+    tools:'🧰', certifications:'🏅', experience:'💼', education:'🎓', contact:'✉'
+  };
+  document.querySelectorAll('.section:not(.hero)').forEach(section=>{
+    const title=section.querySelector('.section-title');
+    if(title){ title.dataset.icon=iconMap[section.id] || '✦'; }
+  });
+  const sections=[...document.querySelectorAll('.section:not(.hero)')];
+  if(!('IntersectionObserver' in window)){
+    sections.forEach(s=>s.classList.add('section-visible'));
+    return;
+  }
+  const observer=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        entry.target.classList.add('section-visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  },{threshold:.12,rootMargin:'0px 0px -8% 0px'});
+  sections.forEach(section=>observer.observe(section));
+})();
