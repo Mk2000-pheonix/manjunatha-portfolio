@@ -125,6 +125,62 @@ document.querySelectorAll('[data-modal-title]').forEach(card => {
   });
 });
 
+function launchAwardCelebration(){
+  const old=document.querySelector('.celebration-popper-layer');
+  if(old) old.remove();
+  const layer=document.createElement('div');
+  layer.className='celebration-popper-layer';
+  const colors=['#67e8f9','#a78bfa','#f0abfc','#f9a8d4','#fbbf24','#34d399','#60a5fa','#fb7185','#fde68a','#c4b5fd'];
+  const sides=[
+    {x:'4vw',y:'18vh',tx:'34vw',ty:'62vh'},
+    {x:'96vw',y:'18vh',tx:'-34vw',ty:'62vh'},
+    {x:'12vw',y:'7vh',tx:'28vw',ty:'70vh'},
+    {x:'88vw',y:'7vh',tx:'-28vw',ty:'70vh'},
+    {x:'25vw',y:'2vh',tx:'18vw',ty:'76vh'},
+    {x:'75vw',y:'2vh',tx:'-18vw',ty:'76vh'}
+  ];
+  sides.forEach((s,si)=>{
+    for(let i=0;i<24;i++){
+      const p=document.createElement('i');
+      const spread=(Math.random()-.5)*18;
+      p.className='celebration-popper';
+      p.style.setProperty('--x',`calc(${s.x} + ${spread}vw)`);
+      p.style.setProperty('--y',`calc(${s.y} + ${(Math.random()-.5)*12}vh)`);
+      p.style.setProperty('--tx',`${parseFloat(s.tx)+(Math.random()-.5)*16}vw`);
+      p.style.setProperty('--ty',`${parseFloat(s.ty)+(Math.random()-.5)*20}vh`);
+      p.style.setProperty('--r',`${(Math.random()-.5)*1500}deg`);
+      p.style.setProperty('--c',colors[(i+si*3)%colors.length]);
+      p.style.setProperty('--d',`${2.5+Math.random()*1.35}s`);
+      p.style.setProperty('--delay',`${Math.random()*.45}s`);
+      layer.appendChild(p);
+    }
+  });
+  for(let i=0;i<30;i++){
+    const b=document.createElement('b');
+    b.className='celebration-burst';
+    b.style.setProperty('--bx',`${48+(Math.random()-.5)*18}vw`);
+    b.style.setProperty('--by',`${42+(Math.random()-.5)*20}vh`);
+    b.style.setProperty('--bc',colors[i%colors.length]);
+    b.style.setProperty('--br',`${(Math.random()-.5)*180}deg`);
+    b.style.setProperty('--bd',`${.25+Math.random()*.7}s`);
+    layer.appendChild(b);
+  }
+  // Fine glitter / sparkle particles for a softer premium celebration.
+  for(let i=0;i<54;i++){
+    const g=document.createElement('span');
+    g.className='celebration-glitter';
+    g.style.setProperty('--gx',`${12+Math.random()*76}vw`);
+    g.style.setProperty('--gy',`${8+Math.random()*72}vh`);
+    g.style.setProperty('--gc',colors[i%colors.length]);
+    g.style.setProperty('--gs',`${3+Math.random()*5}px`);
+    g.style.setProperty('--gd',`${1.7+Math.random()*1.9}s`);
+    g.style.setProperty('--gdelay',`${Math.random()*.9}s`);
+    layer.appendChild(g);
+  }
+  document.body.appendChild(layer);
+  setTimeout(()=>layer.remove(),4500);
+}
+
 function openModal(title, body, iconSrc = '') {
   if (!modal) return;
   modalTitle.textContent = title;
@@ -136,6 +192,7 @@ function openModal(title, body, iconSrc = '') {
   modal.classList.add('show');
   modal.setAttribute('aria-hidden', 'false');
   document.body.classList.add('modal-open');
+  if ((body || '').includes('award-modal-certificate')) launchAwardCelebration();
 }
 
 function closeModal() {
