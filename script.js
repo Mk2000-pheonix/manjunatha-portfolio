@@ -30,7 +30,7 @@ function openContactCard(){
         <a href="mailto:mkmanjunatha9@gmail.com"><span class="modal-contact-icon email-icon">✉</span><span>Email</span><small>mkmanjunatha9@gmail.com</small></a>
         <a href="tel:+917338594205"><span class="modal-contact-icon phone-icon">☎</span><span>Phone</span><small>+91 7338594205</small></a>
         <a href="https://www.linkedin.com/in/manjunatha-m-k-abb34018a" target="_blank" rel="noopener noreferrer"><span class="modal-contact-icon linkedin-icon">in</span><span>LinkedIn</span><small>Connect on LinkedIn</small></a>
-        <a href="https://github.com/Mk2000-pheonix" target="_blank" rel="noopener noreferrer"><span class="modal-contact-icon github-icon">&lt;/&gt;</span><span>GitHub</span><small>View my projects</small></a>
+        <a href="https://github.com/mk2000-phoenix" target="_blank" rel="noopener noreferrer"><span class="modal-contact-icon github-icon">&lt;/&gt;</span><span>GitHub</span><small>View my projects</small></a>
         <a href="https://www.instagram.com/_phoenix_manju?stkn=bXJmajBocHE1M2hm" target="_blank" rel="noopener noreferrer"><span class="modal-contact-icon instagram-icon">◎</span><span>Instagram</span><small>Follow on Instagram</small></a>
         <a href="https://wa.me/917338594205" target="_blank" rel="noopener noreferrer"><span class="modal-contact-icon whatsapp-icon"><img src="assets/icons/whatsapp.svg" alt=""></span><span>WhatsApp</span><small>Chat on WhatsApp</small></a>
       </div>
